@@ -1,0 +1,16 @@
+<div class="p-4 h-full flex flex-col justify-between">
+  <div
+    class="bg-white pg-2 rounded-lg p-3 text-2xl text-center text-black"
+    [innerHtml]="question.question"
+  ></div>
+  <div class="flex flex-col items-stretch mt-5">
+    <ion-button
+      *ngFor="let answer of possibleAnswers"
+      [color]="getButtonColor(answer)"
+      shape="round"
+      class="text-xl text-black mt-2 mb-2 h-[75px]"
+      (click)="handleButtonClick(answer)"
+      ><p class="max-h-full w-full whitespace-normal" [innerHtml]="answer"></p
+    ></ion-button>
+  </div>
+</div>

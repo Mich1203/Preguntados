@@ -1,0 +1,27 @@
+<ion-header [translucent]="true" class="bg-blue-400">
+  <ion-toolbar>
+    <div class="flex justify-between pr-4 pl-4">
+      <h1 class="font-bold text-2xl">Puntos: {{ score }}</h1>
+      <h1 class="font-bold text-2xl text-right">
+        {{gameCounter.value}}''
+      </h1>
+    </div>
+    <ion-progress-bar
+      [value]="gameCounter.value / TOTAL_GAME_TIME"
+    ></ion-progress-bar>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding h-full"
+  ><div
+    *ngIf="questionCounter.show"
+    class="h-full flex flex-col justify-center items-center"
+  >
+    <h1 class="text-9xl">{{ questionCounter.value }}</h1>
+  </div>
+  <div *ngIf="!questionCounter.show" class="h-full">
+    <app-question
+      *ngIf="questions[currentQuestionIndex]"
+      [question]="questions[currentQuestionIndex]"
+      (selectAnswer)="handleSelectAnswer($event)"
+    ></app-question></div
+></ion-content>

@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Configuraci&oacute;n</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div [formGroup]="settingsForm">
+    <!-- Disabled Segment -->
+    <div>
+      <ion-label>Dificultad</ion-label>
+      <ion-segment formControlName="difficulty" mode="ios">
+        <ion-segment-button [value]="DIFFICULTY_ENUM.easy">
+          <ion-label>Facil</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="DIFFICULTY_ENUM.medium">
+          <ion-label>Normal</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="DIFFICULTY_ENUM.hard">
+          <ion-label>Dific&iacute;l</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+  </div>
+</ion-content>

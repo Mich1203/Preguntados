@@ -4,7 +4,11 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+    loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
+  },
+  {
+    path: 'classic-mode',
+    loadChildren: () => import('./pages/classic-mode/classic-mode.module').then( m => m.ClassicModePageModule)
   }
 ];
 @NgModule({

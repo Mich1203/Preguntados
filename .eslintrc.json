@@ -14,6 +14,7 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "no-underscore-dangle": ["off"],
         "@angular-eslint/component-class-suffix": [
           "error",
           {
@@ -35,6 +36,15 @@
             "prefix": "app",
             "style": "camelCase"
           }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "typeProperty",
+            "format": null
+          },
+          { "selector": "objectLiteralProperty", "format": null },
+          { "selector": "interface", "format": ["PascalCase"] }
         ]
       }
     },
