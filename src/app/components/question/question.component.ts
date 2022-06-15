@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { IQuestionItem } from 'src/app/interfaces/questions';
 import { shuffle } from 'src/app/utils/utils';
 
@@ -7,7 +15,7 @@ import { shuffle } from 'src/app/utils/utils';
   templateUrl: './question.component.html',
   styleUrls: ['./question.component.scss'],
 })
-export class QuestionComponent implements OnInit {
+export class QuestionComponent implements OnInit, OnChanges {
   @Input() question: IQuestionItem;
   @Output() selectAnswer: EventEmitter<boolean> = new EventEmitter();
   possibleAnswers: string[];
@@ -16,6 +24,18 @@ export class QuestionComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    this.init();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    if (changes.question.currentValue.question) {
+      this.init();
+    }
+  }
+
+  init() {
+    this.selectedAnswer = null;
     this.possibleAnswers = shuffle([
       this.question.correct_answer,
       ...this.question.incorrect_answers,
@@ -23,6 +43,9 @@ export class QuestionComponent implements OnInit {
   }
 
   handleButtonClick(answer: string) {
+    if (this.selectedAnswer) {
+      return;
+    }
     this.selectedAnswer = answer;
     this.selectAnswer.emit(
       this.selectedAnswer === this.question.correct_answer

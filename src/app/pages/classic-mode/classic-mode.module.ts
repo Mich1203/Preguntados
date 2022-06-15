@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { ClassicModePageRoutingModule } from './classic-mode-routing.module';
 import { ClassicModePage } from './classic-mode.page';
 import { QuestionComponent } from 'src/app/components/question/question.component';
+import { GameSummaryComponent } from 'src/app/components/game-summary/game-summary.component';
 
 @NgModule({
   imports: [
@@ -13,6 +14,6 @@ import { QuestionComponent } from 'src/app/components/question/question.componen
     IonicModule,
     ClassicModePageRoutingModule,
   ],
-  declarations: [ClassicModePage, QuestionComponent],
+  declarations: [ClassicModePage, QuestionComponent, GameSummaryComponent],
 })
 export class ClassicModePageModule {}

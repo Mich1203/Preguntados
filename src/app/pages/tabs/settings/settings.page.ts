@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '@auth0/auth0-angular';
 import { from } from 'rxjs';
 import { ComponentCanDeactivate } from 'src/app/guards/save-changes.guard';
 import { EQuestionDifficulty } from 'src/app/interfaces/questions';
@@ -17,7 +19,9 @@ export class SettingsPage implements OnInit, ComponentCanDeactivate {
 
   constructor(
     private fb: FormBuilder,
-    private storageService: StorageService
+    private storageService: StorageService,
+    public authService: AuthService,
+    @Inject(DOCUMENT) public document: Document
   ) {}
 
   async ngOnInit() {

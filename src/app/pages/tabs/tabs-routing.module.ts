@@ -4,7 +4,7 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
@@ -35,10 +35,6 @@ const routes: Routes = [
     redirectTo: '/tabs/homeTab',
     pathMatch: 'full'
   },
-  {
-    path: 'settings',
-    loadChildren: () => import('./settings/settings.module').then( m => m.SettingsPageModule)
-  }
 ];
 
 @NgModule({

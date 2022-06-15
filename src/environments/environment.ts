@@ -4,7 +4,13 @@
 
 export const environment = {
   production: false,
+  API_URL: 'http://localhost:3000',
   OPEN_API_URL: 'https://opentdb.com',
+  AUTH: {
+    domain: 'dev-t8nub8hr.us.auth0.com',
+    clientId: 'CRjzT8sBe7kS8B8Bq1A8fLnlHN7AyVvc',
+    redirectUri: window.location.href,
+  },
 };
 
 /*

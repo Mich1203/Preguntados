@@ -22,4 +22,12 @@
       </ion-segment>
     </div>
   </div>
+  <ion-button
+    *ngIf="authService.isAuthenticated$ | async"
+    class="mt-5"
+    shape="round"
+    expand="full"
+    (click)="authService.logout({ returnTo: document.location.origin })"
+    >Cerrar sesi&oacute;n</ion-button
+  >
 </ion-content>

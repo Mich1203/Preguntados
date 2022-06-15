@@ -7,6 +7,8 @@ import {
 import { ApiService } from './services/api.service';
 import { AudioService } from './services/audio.service';
 import { StorageService } from './services/storage.service';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
@@ -17,13 +19,30 @@ export class AppComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private storageService: StorageService,
-    private audioService: AudioService
+    private audioService: AudioService,
+    private screenOrientation: ScreenOrientation,
+    private platform: Platform
   ) {}
 
   ngOnInit(): void {
     this.storageService.init().then(() => this.initSettings());
     this.audioService.init();
-    this.apiService.fetchCategories();
+    const platforms = {
+      desktop: this.platform.is('desktop'),
+      pwa: this.platform.is('pwa'),
+      cordova: this.platform.is('cordova'),
+      capacitor: this.platform.is('capacitor'),
+      hybrid: this.platform.is('hybrid'),
+      android: this.platform.is('android'),
+      mobile: this.platform.is('mobile'),
+      mobileWeb: this.platform.is('mobileweb'),
+      tablet: this.platform.is('tablet'),
+    };
+    console.log(platforms);
+    if (platforms.desktop || platforms.pwa || platforms.mobileWeb) {
+      return;
+    }
+    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
   }
 
   async initSettings() {

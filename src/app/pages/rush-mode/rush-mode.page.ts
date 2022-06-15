@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertController, Platform } from '@ionic/angular';
+import { Platform, AlertController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { filter, first, map } from 'rxjs/operators';
 import { AUDIOS } from 'src/app/interfaces/audio';
 import { IQuestionItem } from 'src/app/interfaces/questions';
 import { ApiService } from 'src/app/services/api.service';
@@ -10,11 +11,11 @@ const COUNTER_INITIAL = 3;
 const ONE_SEC_MS = 1000;
 
 @Component({
-  selector: 'app-classic-mode',
-  templateUrl: './classic-mode.page.html',
-  styleUrls: ['./classic-mode.page.scss'],
+  selector: 'app-rush-mode',
+  templateUrl: './rush-mode.page.html',
+  styleUrls: ['./rush-mode.page.scss'],
 })
-export class ClassicModePage implements OnInit, OnDestroy {
+export class RushModePage implements OnInit, OnDestroy {
   TOTAL_GAME_TIME = 60;
   gameOver = false;
 
@@ -31,6 +32,8 @@ export class ClassicModePage implements OnInit, OnDestroy {
   currentQuestionIndex = 0;
   score = 0;
 
+  private subscriptions: Subscription = new Subscription();
+
   constructor(
     private apiService: ApiService,
     private audioService: AudioService,
@@ -39,11 +42,20 @@ export class ClassicModePage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.apiService.fetchQuestions();
-    this.platform.backButton.subscribeWithPriority(10, (next) => {
-      this.presentAlert(next);
-    });
-    this.apiService.questions.subscribe((qs) => (this.questions = qs));
+    this.apiService.fetchQuestions({ amount: 1 });
+    this.subscriptions.add(
+      this.platform.backButton.subscribeWithPriority(10, (next) => {
+        this.presentAlert(next);
+      })
+    );
+    this.subscriptions.add(
+      this.apiService.questions
+        .pipe(
+          filter((qs) => qs.length > 0),
+          map((qs) => qs[0])
+        )
+        .subscribe((qs) => this.questions.push(qs))
+    );
     this.startQuestionCounter();
   }
 
@@ -54,6 +66,7 @@ export class ClassicModePage implements OnInit, OnDestroy {
     if (this.questionCounter.interval) {
       clearInterval(this.questionCounter.interval);
     }
+    this.subscriptions.unsubscribe();
   }
 
   async presentAlert(callback: () => void) {
@@ -75,7 +88,10 @@ export class ClassicModePage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  startGameCounter() {
+  startGameCounter(fetchNextQuestion = true) {
+    if (fetchNextQuestion) {
+      this.apiService.fetchQuestions({ amount: 1 });
+    }
     this.gameCounter.interval = setInterval(() => {
       --this.gameCounter.value;
       this.audioService.play(AUDIOS.clock_tick);
@@ -98,7 +114,7 @@ export class ClassicModePage implements OnInit, OnDestroy {
       --this.questionCounter.value;
       if (this.questionCounter.value === 0) {
         this.questionCounter.show = false;
-        this.startGameCounter();
+        this.startGameCounter(false);
         clearInterval(this.questionCounter.interval);
       }
     }, ONE_SEC_MS);
