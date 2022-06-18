@@ -4,8 +4,10 @@ import { Subscription } from 'rxjs';
 import { filter, first, map } from 'rxjs/operators';
 import { AUDIOS } from 'src/app/interfaces/audio';
 import { IQuestionItem } from 'src/app/interfaces/questions';
+import { IUser } from 'src/app/interfaces/user';
 import { ApiService } from 'src/app/services/api.service';
 import { AudioService } from 'src/app/services/audio.service';
+import { UserService } from 'src/app/services/user.service';
 
 const COUNTER_INITIAL = 3;
 const ONE_SEC_MS = 1000;
@@ -18,6 +20,7 @@ const ONE_SEC_MS = 1000;
 export class RushModePage implements OnInit, OnDestroy {
   TOTAL_GAME_TIME = 60;
   gameOver = false;
+  currentUser: IUser;
 
   questionCounter = {
     show: false,
@@ -35,6 +38,7 @@ export class RushModePage implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
 
   constructor(
+    private userService: UserService,
     private apiService: ApiService,
     private audioService: AudioService,
     private platform: Platform,
@@ -42,7 +46,8 @@ export class RushModePage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.apiService.fetchQuestions({ amount: 1 });
+    this.apiService.resetQuestions();
+    this.apiService.fetchQuestions({ amount: 5 });
     this.subscriptions.add(
       this.platform.backButton.subscribeWithPriority(10, (next) => {
         this.presentAlert(next);
@@ -50,11 +55,13 @@ export class RushModePage implements OnInit, OnDestroy {
     );
     this.subscriptions.add(
       this.apiService.questions
-        .pipe(
-          filter((qs) => qs.length > 0),
-          map((qs) => qs[0])
-        )
-        .subscribe((qs) => this.questions.push(qs))
+        .pipe(filter((qs) => qs.length > 0))
+        .subscribe((qs) => this.questions.push(...qs))
+    );
+    this.subscriptions.add(
+      this.userService.profile.subscribe(
+        (profile) => (this.currentUser = profile)
+      )
     );
     this.startQuestionCounter();
   }
@@ -88,9 +95,9 @@ export class RushModePage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  startGameCounter(fetchNextQuestion = true) {
-    if (fetchNextQuestion) {
-      this.apiService.fetchQuestions({ amount: 1 });
+  startGameCounter() {
+    if (this.score % 4 === 0) {
+      this.apiService.fetchQuestions({ amount: 5 });
     }
     this.gameCounter.interval = setInterval(() => {
       --this.gameCounter.value;
@@ -114,7 +121,7 @@ export class RushModePage implements OnInit, OnDestroy {
       --this.questionCounter.value;
       if (this.questionCounter.value === 0) {
         this.questionCounter.show = false;
-        this.startGameCounter(false);
+        this.startGameCounter();
         clearInterval(this.questionCounter.interval);
       }
     }, ONE_SEC_MS);
@@ -126,13 +133,12 @@ export class RushModePage implements OnInit, OnDestroy {
     if (correct) {
       ++this.score;
       this.audioService.play(AUDIOS.correct_answer);
+      if (this.score % 5 === 0) {
+        this.gameCounter.value += 10;
+      }
       setTimeout(() => {
         ++this.currentQuestionIndex;
-        if (this.currentQuestionIndex === 1) {
-          this.finishGame();
-        } else {
-          this.startGameCounter();
-        }
+        this.startGameCounter();
       }, ONE_SEC_MS * 3.5);
     } else {
       this.audioService.play(AUDIOS.wrong_answer);
@@ -142,5 +148,13 @@ export class RushModePage implements OnInit, OnDestroy {
 
   finishGame() {
     this.gameOver = true;
+    const { score, time_left } = this.currentUser.hi_score_rush;
+    if (this.score > score || this.gameCounter.value < time_left) {
+      this.userService.saveUserScore(
+        this.gameCounter.value,
+        this.score,
+        'rush'
+      );
+    }
   }
 }

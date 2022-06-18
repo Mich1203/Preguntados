@@ -28,7 +28,6 @@ export class QuestionComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (changes.question.currentValue.question) {
       this.init();
     }

@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ClassicModePageRoutingModule } from './classic-mode-routing.module';
 import { ClassicModePage } from './classic-mode.page';
-import { QuestionComponent } from 'src/app/components/question/question.component';
-import { GameSummaryComponent } from 'src/app/components/game-summary/game-summary.component';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   imports: [
@@ -13,7 +12,8 @@ import { GameSummaryComponent } from 'src/app/components/game-summary/game-summa
     FormsModule,
     IonicModule,
     ClassicModePageRoutingModule,
+    ComponentsModule,
   ],
-  declarations: [ClassicModePage, QuestionComponent, GameSummaryComponent],
+  declarations: [ClassicModePage],
 })
 export class ClassicModePageModule {}

@@ -13,6 +13,8 @@ import { switchMap, tap } from 'rxjs/operators';
 import { BehaviorSubject, from } from 'rxjs';
 import { StorageService } from './storage.service';
 import { STORAGE_KEYS } from '../interfaces/storage';
+import { IUser } from '../interfaces/user';
+import { ILeaderboardData } from '../interfaces/leaderboard';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +26,8 @@ export class ApiService {
   private categoriesArr: BehaviorSubject<ICategoryItem[]> = new BehaviorSubject(
     []
   );
+  private leaderboardArr: BehaviorSubject<IUser[]> = new BehaviorSubject([]);
+  private _loading: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(
     private http: HttpClient,
@@ -38,13 +42,44 @@ export class ApiService {
     return this.questionsArr.asObservable();
   }
 
+  get leaderboard() {
+    return this.leaderboardArr.asObservable();
+  }
+
+  get loading() {
+    return this._loading.asObservable();
+  }
+
+  fetchLeaderboard(mode: string = 'classic') {
+    this._loading.next(true);
+    this.http
+      .get<ILeaderboardData>(`${environment.API_URL}/user/leaderboard`, {
+        params: { mode },
+      })
+      .pipe(
+        tap((response) => {
+          this.leaderboardArr.next(response);
+          this._loading.next(false);
+        })
+      )
+      .subscribe();
+  }
+
   fetchCategories() {
+    this._loading.next(true);
     this.http
       .get<IFetchCatsResponse>(`${environment.OPEN_API_URL}/api_category.php`)
       .pipe(
-        tap((response) => this.categoriesArr.next(response.trivia_categories))
+        tap((response) => {
+          this.categoriesArr.next(response.trivia_categories);
+          this._loading.next(false);
+        })
       )
       .subscribe();
+  }
+
+  resetQuestions() {
+    this.questionsArr.next([]);
   }
 
   fetchQuestions({
@@ -52,6 +87,7 @@ export class ApiService {
     type = 'multiple',
     ...args
   }: IFetchQuestionsArgs = {}) {
+    this._loading.next(true);
     from(
       !args.difficulty
         ? this.storageService.get(STORAGE_KEYS.settings)
@@ -66,7 +102,10 @@ export class ApiService {
             }
           )
         ),
-        tap((response) => this.questionsArr.next(response.results))
+        tap((response) => {
+          this.questionsArr.next(response.results);
+          this._loading.next(false);
+        })
       )
       .subscribe();
   }

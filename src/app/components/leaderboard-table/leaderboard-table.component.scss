@@ -1,0 +1,28 @@
+.leaderboard-table {
+  border: 5px solid darkslategray;
+  background-color: white;
+
+  thead {
+    background-color: darkslategray;
+    color: white;
+    height: 50px;
+  }
+
+  tr {
+    height: 50px;
+    color: darkslategray;
+    border-bottom: 1px solid darkslategray;
+
+    &:hover {
+      background-color: olivedrab;
+      color: white;
+    }
+  }
+
+  td,
+  th {
+    padding-left: 5px;
+    text-align: center;
+  }
+
+}

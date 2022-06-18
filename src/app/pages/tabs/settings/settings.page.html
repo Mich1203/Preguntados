@@ -1,33 +1,40 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Configuraci&oacute;n</ion-title>
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon name="cog-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Settings</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div [formGroup]="settingsForm">
-    <!-- Disabled Segment -->
-    <div>
-      <ion-label>Dificultad</ion-label>
-      <ion-segment formControlName="difficulty" mode="ios">
-        <ion-segment-button [value]="DIFFICULTY_ENUM.easy">
-          <ion-label>Facil</ion-label>
-        </ion-segment-button>
-        <ion-segment-button [value]="DIFFICULTY_ENUM.medium">
-          <ion-label>Normal</ion-label>
-        </ion-segment-button>
-        <ion-segment-button [value]="DIFFICULTY_ENUM.hard">
-          <ion-label>Dific&iacute;l</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+<ion-content>
+  <div class="p-4 h-full bg_field">
+    <div [formGroup]="settingsForm">
+      <!-- Disabled Segment -->
+      <div>
+        <ion-label class="text-white">Difficulty</ion-label>
+        <ion-segment formControlName="difficulty" mode="ios">
+          <ion-segment-button [value]="DIFFICULTY_ENUM.easy">
+            <ion-label>Easy</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="DIFFICULTY_ENUM.medium">
+            <ion-label>Normal</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="DIFFICULTY_ENUM.hard">
+            <ion-label>Hard</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
     </div>
+    <ion-button
+      *ngIf="authService.isAuthenticated$ | async"
+      class="mt-5"
+      shape="round"
+      expand="full"
+      (click)="logout()"
+      >Logout</ion-button
+    >
   </div>
-  <ion-button
-    *ngIf="authService.isAuthenticated$ | async"
-    class="mt-5"
-    shape="round"
-    expand="full"
-    (click)="authService.logout({ returnTo: document.location.origin })"
-    >Cerrar sesi&oacute;n</ion-button
-  >
 </ion-content>

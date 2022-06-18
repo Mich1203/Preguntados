@@ -1,13 +1,35 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Tab 1 </ion-title>
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon name="stats-chart-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title> Leaderboard </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="h-full bg_field p-4">
+    <ion-segment value="classic" (ionChange)="handleModeChange($event)">
+      <ion-segment-button class="text-white" value="classic">
+        <ion-label>Classic</ion-label>
+      </ion-segment-button>
+      <ion-segment-button class="text-white" value="rush">
+        <ion-label>Rush</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <div
+      *ngIf="(apiService.loading | async); else table"
+      class="text-center pt-[30px]"
+    >
+      <ion-spinner></ion-spinner>
+    </div>
+    <ng-template #table
+      ><app-leaderboard-table
+        [data]="leaderboardData"
+        [mode]="selectedMode"
+      ></app-leaderboard-table
+    ></ng-template>
+  </div>
 </ion-content>

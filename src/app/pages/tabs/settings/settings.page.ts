@@ -2,7 +2,10 @@ import { DOCUMENT } from '@angular/common';
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '@auth0/auth0-angular';
+import { Browser } from '@capacitor/browser';
 import { from } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { callbackUri } from 'src/app/auth.config';
 import { ComponentCanDeactivate } from 'src/app/guards/save-changes.guard';
 import { EQuestionDifficulty } from 'src/app/interfaces/questions';
 import { ISettings, STORAGE_KEYS } from 'src/app/interfaces/storage';
@@ -44,5 +47,19 @@ export class SettingsPage implements OnInit, ComponentCanDeactivate {
     return from(
       this.storageService.set(STORAGE_KEYS.settings, this.settingsForm.value)
     );
+  }
+
+  logout() {
+    this.authService
+      .buildLogoutUrl({ returnTo: callbackUri })
+      .pipe(
+        tap((url) => {
+          // Call the logout fuction, but only log out locally
+          this.authService.logout({ localOnly: true });
+          // Redirect to Auth0 using the Browser plugin, to clear the user's session
+          Browser.open({ url });
+        })
+      )
+      .subscribe();
   }
 }

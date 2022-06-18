@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { RushModePageRoutingModule } from './rush-mode-routing.module';
 
 import { RushModePage } from './rush-mode.page';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RushModePageRoutingModule
+    RushModePageRoutingModule,
+    ComponentsModule,
   ],
-  declarations: [RushModePage]
+  declarations: [RushModePage],
 })
 export class RushModePageModule {}

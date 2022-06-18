@@ -18,6 +18,10 @@ import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/n
     IonicStorageModule.forRoot(),
     AuthModule.forRoot({
       ...environment.AUTH,
+      httpInterceptor: {
+        ...environment.httpInterceptor
+      },
+      cacheLocation: 'localstorage'
     }),
     AppRoutingModule,
     HttpClientModule,

@@ -1,15 +1,29 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+import { callbackUri, clientId, domain } from 'src/app/auth.config';
+import * as config from '../../auth_config.json';
+
+const { audience, errorPath } = config as {
+  audience?: string;
+  errorPath: string;
+};
+
+const API_URL = 'https://app-preguntados-mobile.herokuapp.com';
 
 export const environment = {
   production: false,
-  API_URL: 'http://localhost:3000',
+  API_URL,
   OPEN_API_URL: 'https://opentdb.com',
   AUTH: {
-    domain: 'dev-t8nub8hr.us.auth0.com',
-    clientId: 'CRjzT8sBe7kS8B8Bq1A8fLnlHN7AyVvc',
-    redirectUri: window.location.href,
+    domain,
+    clientId,
+    audience: 'https://preguntados.back',
+    redirectUri: callbackUri,
+    errorPath,
+  },
+  httpInterceptor: {
+    allowedList: [`${API_URL}/*`],
   },
 };
 

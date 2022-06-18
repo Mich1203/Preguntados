@@ -25,15 +25,6 @@ export class HomePage implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.categories.subscribe((cats) => (this.categories = cats))
     );
-    this.subscriptions.add(
-      this.authService.isAuthenticated$
-        .pipe(
-          filter((isAuth) => isAuth),
-          tap(() => this.userService.fetchProfile()),
-          takeWhile((isAuth) => !isAuth)
-        )
-        .subscribe()
-    );
   }
 
   ngOnDestroy(): void {

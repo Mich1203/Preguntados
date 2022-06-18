@@ -1,10 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, Platform } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { AUDIOS } from 'src/app/interfaces/audio';
 import { IQuestionItem } from 'src/app/interfaces/questions';
+import { IUser } from 'src/app/interfaces/user';
 import { ApiService } from 'src/app/services/api.service';
 import { AudioService } from 'src/app/services/audio.service';
+import { UserService } from 'src/app/services/user.service';
 
 const COUNTER_INITIAL = 3;
 const ONE_SEC_MS = 1000;
@@ -15,8 +18,10 @@ const ONE_SEC_MS = 1000;
   styleUrls: ['./classic-mode.page.scss'],
 })
 export class ClassicModePage implements OnInit, OnDestroy {
+  subscriptions: Subscription = new Subscription();
   TOTAL_GAME_TIME = 60;
   gameOver = false;
+  currentUser: IUser;
 
   questionCounter = {
     show: false,
@@ -33,17 +38,28 @@ export class ClassicModePage implements OnInit, OnDestroy {
 
   constructor(
     private apiService: ApiService,
+    private userService: UserService,
     private audioService: AudioService,
     private platform: Platform,
     private alertController: AlertController
   ) {}
 
   ngOnInit() {
+    this.apiService.resetQuestions();
     this.apiService.fetchQuestions();
-    this.platform.backButton.subscribeWithPriority(10, (next) => {
-      this.presentAlert(next);
-    });
-    this.apiService.questions.subscribe((qs) => (this.questions = qs));
+    this.subscriptions.add(
+      this.platform.backButton.subscribeWithPriority(10, (next) => {
+        this.presentAlert(next);
+      })
+    );
+    this.subscriptions.add(
+      this.apiService.questions.subscribe((qs) => (this.questions = qs))
+    );
+    this.subscriptions.add(
+      this.userService.profile.subscribe(
+        (profile) => (this.currentUser = profile)
+      )
+    );
     this.startQuestionCounter();
   }
 
@@ -112,7 +128,7 @@ export class ClassicModePage implements OnInit, OnDestroy {
       this.audioService.play(AUDIOS.correct_answer);
       setTimeout(() => {
         ++this.currentQuestionIndex;
-        if (this.currentQuestionIndex === 1) {
+        if (this.currentQuestionIndex === 10) {
           this.finishGame();
         } else {
           this.startGameCounter();
@@ -126,5 +142,13 @@ export class ClassicModePage implements OnInit, OnDestroy {
 
   finishGame() {
     this.gameOver = true;
+    const { score, time_left } = this.currentUser.hi_score_classic;
+    if (this.score > score || this.gameCounter.value < time_left) {
+      this.userService.saveUserScore(
+        this.gameCounter.value,
+        this.score,
+        'classic'
+      );
+    }
   }
 }

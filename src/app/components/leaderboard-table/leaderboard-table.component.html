@@ -1,0 +1,24 @@
+<div class="p-4 h-full">
+  <div class="flex flex-col justify-start grow">
+    <table class="leaderboard-table">
+      <thead>
+        <th>#</th>
+        <th class="text-left">Name</th>
+        <th>Score</th>
+        <th>Time</th>
+      </thead>
+      <tr *ngFor="let user of data; let position = index">
+        <td class="pt-1">
+          <ion-badge
+            *ngIf="position < 3"
+            [color]="getBadgeColor(position + 1)"
+            >{{ position + 1 }}</ion-badge
+          >
+        </td>
+        <td class="text-left">{{ user.name }}</td>
+        <td>{{ user["hi_score_" + mode].score }}</td>
+        <td>{{ user["hi_score_" + mode].time_left }}</td>
+      </tr>
+    </table>
+  </div>
+</div>

@@ -1,11 +1,17 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Tab 3 </ion-title>
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title> Home </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ul>
-    <li *ngFor="let cat of categories">{{ cat.name }}</li>
-  </ul>
+  <div class="bg_field h-full flex flex-col items-center justify-center">
+    <img class="w-2/4" src="/assets/images/preguntados_icon.png">
+    <h1 class="text-6xl font-bold">TriviaCrack</h1>
+  </div>
 </ion-content>
